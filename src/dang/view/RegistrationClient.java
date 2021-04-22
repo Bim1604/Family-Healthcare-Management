@@ -433,30 +433,18 @@ public class RegistrationClient extends javax.swing.JFrame {
         }
         try {
             numberOfMember = Integer.parseInt(txtNumberOfMember.getText());
-            if (numberOfMember == 0) {
-                JOptionPane.showMessageDialog(this, "Invalid Number Of Member");
-                return null;
-            }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid Number Of Member");
             return null;
         }
         try {
             numberOfChildren = Integer.parseInt(txtChildren.getText());
-            if (numberOfChildren == 0) {
-                JOptionPane.showMessageDialog(this, "Invalid Number Of Children");
-                return null;
-            }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid Number Of Children");
             return null;
         }
         try {
             numberOfAdults = Integer.parseInt(txtAdults.getText());
-            if (numberOfAdults == 0) {
-                JOptionPane.showMessageDialog(this, "Invalid Number Of Adluts");
-                return null;
-            }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid Number Of Adluts");
             return null;
@@ -639,7 +627,8 @@ public class RegistrationClient extends javax.swing.JFrame {
                 addNewRegistration = false;
                 btnAddNew.setEnabled(false);
                 btnSave.setEnabled(true);
-                btnSave.setEnabled(true);
+                btnDelete.setEnabled(true);
+                tblRegistration.selectAll();
             } else {
                 JOptionPane.showMessageDialog(this, "Not found");
             }
@@ -687,10 +676,11 @@ public class RegistrationClient extends javax.swing.JFrame {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         int choice = jComboBox1.getSelectedIndex();
         if (choice == 0) {
-
+            registrationsServer.sortAscendingByRegistrationName();
         } else {
-
+            registrationsServer.sortDescendingByRegistrationName();
         }
+        tblRegistration.updateUI();
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**

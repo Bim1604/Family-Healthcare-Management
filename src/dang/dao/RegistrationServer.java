@@ -16,6 +16,8 @@ import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.StringTokenizer;
 
 /**
@@ -205,11 +207,24 @@ public class RegistrationServer extends UnicastRemoteObject implements Registrat
         return searchList;
     }
 
-//    public ArrayList<RegistrationDTO> sortAscendingByRegistrationName() {
-//        registrationList = findAllRegistrations();
-//        Collections.sort(registrationList, new Comparator<RegistrationDTO>())
-//        {
-//
-//        };
-//    }
+    public void sortAscendingByRegistrationName() {
+        registrationList = findAllRegistrations();
+        Collections.sort(registrationList, new Comparator<RegistrationDTO>(){
+            @Override
+            public int compare(RegistrationDTO t, RegistrationDTO t1) {
+                return t.getFullName().compareTo(t1.getFullName());
+            }
+            
+        });
+    }
+    
+    public void sortDescendingByRegistrationName(){
+        registrationList = findAllRegistrations();
+        Collections.sort(registrationList, new Comparator<RegistrationDTO>(){
+            @Override
+            public int compare(RegistrationDTO t, RegistrationDTO t1) {
+                return t1.getFullName().compareTo(t.getFullName());
+            }
+        });        
+    }
 }
