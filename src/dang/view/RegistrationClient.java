@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import dang.invalid.Invalid;
+import dang.logger.Log;
 
 /**
  *
@@ -30,7 +31,7 @@ public class RegistrationClient extends javax.swing.JFrame {
     RegistrationFullModel registrationFullModel;
     RegistrationServer registrationsServer;
     boolean addNewRegistration = false;
-
+    Log log;
     /**
      * Creates new form RegistrationClient
      */
@@ -401,6 +402,10 @@ public class RegistrationClient extends javax.swing.JFrame {
         rdMale.setSelected(true);
     }
     private void btnAddNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNewActionPerformed
+        boolean checkConnection = checkConnection();
+        if (!checkConnection) {
+            return;
+        }
         clearTextField();
         btnSave.setEnabled(true);
         btnDelete.setEnabled(false);
@@ -506,7 +511,21 @@ public class RegistrationClient extends javax.swing.JFrame {
         }
         return false;
     }
+
+    public boolean checkConnection() {
+        try {
+            registrationInterface = (RegistrationInterface) reg.lookup("rmi://localhost:1431/RegistrationData");
+        } catch (RemoteException | NotBoundException ex) {
+            JOptionPane.showMessageDialog(this, "Server Stopped");
+            return false;
+        }
+        return true;
+    }
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        boolean checkConnection = checkConnection();
+        if (!checkConnection) {
+            return;
+        }
         RegistrationDTO registrationDTO = getInputField();
         if (registrationDTO == null) {
             return;
@@ -556,7 +575,10 @@ public class RegistrationClient extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnGetAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetAllActionPerformed
-
+        boolean checkConnection = checkConnection();
+        if (!checkConnection) {
+            return;
+        }
         try {
             ArrayList<RegistrationDTO> registrationDTO = registrationInterface.findAllRegistrations();
             registrationFullModel.getRegistrationServer().getRegistrationList().clear();
@@ -573,6 +595,10 @@ public class RegistrationClient extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGetAllActionPerformed
 
     private void tblRegistrationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblRegistrationMouseClicked
+        boolean checkConnection = checkConnection();
+        if (!checkConnection) {
+            return;
+        }
         int selectRow = tblRegistration.getSelectedRow();
         String registrationID = registrationFullModel.getRegistrationServer().getRegistrationList().get(selectRow).getRegistrationID();
         try {
@@ -602,6 +628,10 @@ public class RegistrationClient extends javax.swing.JFrame {
     }//GEN-LAST:event_tblRegistrationMouseClicked
 
     private void btnFindByIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindByIDActionPerformed
+        boolean checkConnection = checkConnection();
+        if (!checkConnection) {
+            return;
+        }
         String registrationID = txtRegistrationID.getText();
         try {
             RegistrationDTO registrationDTO = registrationInterface.findByRegistrationID(registrationID);
@@ -639,6 +669,10 @@ public class RegistrationClient extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFindByIDActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        boolean checkConnection = checkConnection();
+        if (!checkConnection) {
+            return;
+        }
         String registrationID = txtRegistrationID.getText();
         int choice = JOptionPane.showConfirmDialog(this, "Do you want to remove this Registration", "Yes/No", JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
@@ -663,6 +697,10 @@ public class RegistrationClient extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnSearchByNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchByNameActionPerformed
+        boolean checkConnection = checkConnection();
+        if (!checkConnection) {
+            return;
+        }
         String searchValue = txtSearchByName.getText();
         ArrayList<RegistrationDTO> searchList;
         searchList = registrationsServer.searchByRegistrationName(searchValue);
@@ -674,6 +712,10 @@ public class RegistrationClient extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchByNameActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        boolean checkConnection = checkConnection();
+        if (!checkConnection) {
+            return;
+        }
         int choice = jComboBox1.getSelectedIndex();
         if (choice == 0) {
             registrationsServer.sortAscendingByRegistrationName();
