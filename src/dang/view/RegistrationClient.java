@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import dang.invalid.Invalid;
 import dang.logger.Log;
+import java.io.IOException;
 
 /**
  *
@@ -32,6 +33,7 @@ public class RegistrationClient extends javax.swing.JFrame {
     RegistrationServer registrationsServer;
     boolean addNewRegistration = false;
     Log log;
+
     /**
      * Creates new form RegistrationClient
      */
@@ -48,6 +50,12 @@ public class RegistrationClient extends javax.swing.JFrame {
             btnAddNew.setEnabled(true);
             btnDelete.setEnabled(false);
             btnSave.setEnabled(false);
+            try {
+                log = new Log("log.txt");
+            } catch (SecurityException | IOException ex) {
+                Log.logger.setLevel(Level.SEVERE);
+                Log.logger.severe(ex.getMessage());
+            }
         } catch (RemoteException | NotBoundException e) {
             JOptionPane.showMessageDialog(this, "Can't create a stub");
         }
@@ -430,27 +438,37 @@ public class RegistrationClient extends javax.swing.JFrame {
             age = Integer.parseInt(txtAge.getText());
             if (age == 0) {
                 JOptionPane.showMessageDialog(this, "Invalid age");
+                Log.logger.setLevel(Level.SEVERE);
+                Log.logger.severe("Invalid age");
                 return null;
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid age");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid age");
             return null;
         }
         try {
             numberOfMember = Integer.parseInt(txtNumberOfMember.getText());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid Number Of Member");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Number Of Member");
             return null;
         }
         try {
             numberOfChildren = Integer.parseInt(txtChildren.getText());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid Number Of Children");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Number Of Children");
             return null;
         }
         try {
             numberOfAdults = Integer.parseInt(txtAdults.getText());
         } catch (NumberFormatException e) {
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Number Of Adluts");
             JOptionPane.showMessageDialog(this, "Invalid Number Of Adluts");
             return null;
         }
@@ -470,34 +488,50 @@ public class RegistrationClient extends javax.swing.JFrame {
         boolean addressCheck = invalid.checkAddress(dto.getAddress());
         if (!registrationIDCheck) {
             JOptionPane.showMessageDialog(this, "Invalid Registration ID");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Registration ID");
             return false;
         }
         if (!fullNameCheck) {
             JOptionPane.showMessageDialog(this, "Invalid FullName");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid FullName");
             return false;
         }
         if (!emailCheck) {
             JOptionPane.showMessageDialog(this, "Invalid Email");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Email");
             return false;
         }
         if (!phoneCheck) {
             JOptionPane.showMessageDialog(this, "Invalid Phone");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Phone");
             return false;
         }
         if (!numberOfChildrenCheck) {
             JOptionPane.showMessageDialog(this, "Invalid Number Of Children");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Number Of Children");
             return false;
         }
         if (!numberOfAdultsCheck) {
             JOptionPane.showMessageDialog(this, "Invalid Number Of Adults");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Number Of Adults");
             return false;
         }
         if (!numberOfMemberCheck) {
             JOptionPane.showMessageDialog(this, "Number of Member isn't equal to Plus of children and adults");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Number of Member isn't equal to Plus of children and adults");
             return false;
         }
         if (!addressCheck) {
             JOptionPane.showMessageDialog(this, "Invalid Address");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("Invalid Address");
             return false;
         }
         return true;
@@ -517,6 +551,8 @@ public class RegistrationClient extends javax.swing.JFrame {
             registrationInterface = (RegistrationInterface) reg.lookup("rmi://localhost:1431/RegistrationData");
         } catch (RemoteException | NotBoundException ex) {
             JOptionPane.showMessageDialog(this, "Server Stopped");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe(ex.getMessage());
             return false;
         }
         return true;
@@ -551,6 +587,8 @@ public class RegistrationClient extends javax.swing.JFrame {
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "Duplicate Registration ID");
+                    Log.logger.setLevel(Level.SEVERE);
+                    Log.logger.severe("Duplicate Registration ID");
                 }
             } else {
                 if (registrationInterface.updateRegistration(registrationDTO)) {
@@ -566,11 +604,16 @@ public class RegistrationClient extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Data save");
                 } else {
                     JOptionPane.showMessageDialog(this, "Update failed");
+                    Log.logger.setLevel(Level.SEVERE);
+                    Log.logger.severe("Update failed");
                 }
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(RegistrationClient.class.getName()).log(Level.SEVERE, null, ex);
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe(ex.getMessage());
         } catch (NullPointerException ex) {
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe(ex.getMessage());
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -590,6 +633,8 @@ public class RegistrationClient extends javax.swing.JFrame {
             txtRegistrationID.setEditable(true);
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(this, "No data to Get");
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe("No data to Get");
         }
 
     }//GEN-LAST:event_btnGetAllActionPerformed
@@ -623,7 +668,8 @@ public class RegistrationClient extends javax.swing.JFrame {
             btnDelete.setEnabled(true);
             addNewRegistration = false;
         } catch (RemoteException ex) {
-            Logger.getLogger(RegistrationClient.class.getName()).log(Level.SEVERE, null, ex);
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe(ex.getMessage());
         }
     }//GEN-LAST:event_tblRegistrationMouseClicked
 
@@ -661,10 +707,13 @@ public class RegistrationClient extends javax.swing.JFrame {
                 tblRegistration.selectAll();
             } else {
                 JOptionPane.showMessageDialog(this, "Not found");
+                Log.logger.setLevel(Level.SEVERE);
+                Log.logger.severe("Not found");
             }
 
         } catch (RemoteException ex) {
-            Logger.getLogger(RegistrationClient.class.getName()).log(Level.SEVERE, null, ex);
+            Log.logger.setLevel(Level.SEVERE);
+            Log.logger.severe(ex.getMessage());
         }
     }//GEN-LAST:event_btnFindByIDActionPerformed
 
@@ -688,10 +737,12 @@ public class RegistrationClient extends javax.swing.JFrame {
                     clearTextField();
                     JOptionPane.showMessageDialog(this, "Data save");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Remove Failed");
+                    Log.logger.setLevel(Level.SEVERE);
+                    Log.logger.severe("Data save");
                 }
             } catch (RemoteException ex) {
-                Logger.getLogger(RegistrationClient.class.getName()).log(Level.SEVERE, null, ex);
+                Log.logger.setLevel(Level.SEVERE);
+                Log.logger.severe(ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnDeleteActionPerformed

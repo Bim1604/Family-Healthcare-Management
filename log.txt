@@ -1,0 +1,24 @@
+Apr 22, 2021 11:09:38 PM dang.view.RegistrationClient getInputField
+SEVERE: Invalid age
+Apr 22, 2021 11:09:46 PM dang.view.RegistrationClient checkConnection
+SEVERE: no such object in table
+Apr 22, 2021 11:10:07 PM dang.view.RegistrationClient getInputField
+SEVERE: Invalid age
+Apr 22, 2021 11:10:10 PM dang.view.RegistrationClient getInputField
+SEVERE: Invalid Number Of Member
+Apr 22, 2021 11:10:14 PM dang.view.RegistrationClient getInputField
+SEVERE: Invalid Number Of Children
+Apr 22, 2021 11:10:16 PM dang.view.RegistrationClient getInputField
+SEVERE: Invalid Number Of Adluts
+Apr 22, 2021 11:10:19 PM dang.view.RegistrationClient checkValid
+SEVERE: Invalid Registration ID
+Apr 22, 2021 11:10:22 PM dang.view.RegistrationClient checkValid
+SEVERE: Invalid Registration ID
+Apr 22, 2021 11:10:26 PM dang.view.RegistrationClient checkValid
+SEVERE: Invalid Email
+Apr 22, 2021 11:10:33 PM dang.view.RegistrationClient checkValid
+SEVERE: Invalid Phone
+Apr 22, 2021 11:10:38 PM dang.view.RegistrationClient checkValid
+SEVERE: Invalid Phone
+Apr 22, 2021 11:10:42 PM dang.view.RegistrationClient checkValid
+SEVERE: Invalid Address
