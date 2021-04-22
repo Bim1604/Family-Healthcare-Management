@@ -17,8 +17,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -98,7 +96,7 @@ public class RegistrationServer extends UnicastRemoteObject implements Registrat
                     return registrationDTO;
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException | NumberFormatException e) {
         }
         return null;
     }
@@ -140,6 +138,7 @@ public class RegistrationServer extends UnicastRemoteObject implements Registrat
         PrintWriter pw = null;
         registrationList = findAllRegistrations();
         RegistrationDTO removeObj = null;
+        boolean remove = false;
         for (RegistrationDTO registrationDTO : registrationList) {
             if (registrationDTO.getRegistrationID().equals(id)) {
                 removeObj = registrationDTO;
@@ -151,19 +150,22 @@ public class RegistrationServer extends UnicastRemoteObject implements Registrat
             for (RegistrationDTO registrationDTO : registrationList) {
                 pw.println(registrationDTO.toString());
             }
+            remove = true;
         } catch (FileNotFoundException e) {
+            remove = false;
         } finally {
             if (pw != null) {
                 pw.close();
             }
         }
-        return true;
+        return remove;
     }
 
     @Override
     public boolean updateRegistration(RegistrationDTO dto) {
         PrintWriter pw = null;
         registrationList = findAllRegistrations();
+        boolean update = false;
         for (RegistrationDTO registrationDTO : registrationList) {
             if (registrationDTO.getRegistrationID().equals(dto.getRegistrationID())) {
                 registrationDTO.setFullName(dto.getFullName());
@@ -182,13 +184,15 @@ public class RegistrationServer extends UnicastRemoteObject implements Registrat
             for (RegistrationDTO registrationDTO : this.registrationList) {
                 pw.println(registrationDTO.toString());
             }
+            update = true;
         } catch (FileNotFoundException e) {
+            update = false;
         } finally {
             if (pw != null) {
                 pw.close();
             }
         }
-        return true;
+        return update;
     }
 
     public ArrayList<RegistrationDTO> searchByRegistrationName(String searchValue) {
@@ -200,4 +204,12 @@ public class RegistrationServer extends UnicastRemoteObject implements Registrat
         }
         return searchList;
     }
+
+//    public ArrayList<RegistrationDTO> sortAscendingByRegistrationName() {
+//        registrationList = findAllRegistrations();
+//        Collections.sort(registrationList, new Comparator<RegistrationDTO>())
+//        {
+//
+//        };
+//    }
 }

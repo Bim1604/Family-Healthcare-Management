@@ -86,13 +86,13 @@ public class RegistrationFullModel extends AbstractTableModel {
                 obj = registrationDTO.isGender();
                 break;
             case 4:
-                obj = registrationDTO.getEmail();
-                break;
-            case 5:
                 obj = registrationDTO.getPhone();
                 break;
-            case 6:
+            case 5:
                 obj = registrationDTO.getAddress();
+                break;
+            case 6:
+                obj = registrationDTO.getEmail();
                 break;
             case 7:
                 obj = registrationDTO.getNumberOfMember();

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import dang.invalid.Invalid;
 
 /**
  *
@@ -409,7 +410,7 @@ public class RegistrationClient extends javax.swing.JFrame {
     public RegistrationDTO getInputField() {
         String registrationID = txtRegistrationID.getText();
         String fullName = txtFullName.getText();
-        int age = Integer.parseInt(txtAge.getText());
+        int age;
         boolean gender = true;
         if (rdFemale.isSelected()) {
             gender = false;
@@ -417,28 +418,132 @@ public class RegistrationClient extends javax.swing.JFrame {
         String email = txtEmail.getText();
         String phone = txtPhone.getText();
         String address = txtAddress.getText();
-        int numberOfMember = Integer.parseInt(txtNumberOfMember.getText());
-        int numberOfChildren = Integer.parseInt(txtChildren.getText());
-        int numberOfAdults = Integer.parseInt(txtAdults.getText());
+        int numberOfMember;
+        int numberOfChildren;
+        int numberOfAdults;
+        try {
+            age = Integer.parseInt(txtAge.getText());
+            if (age == 0) {
+                JOptionPane.showMessageDialog(this, "Invalid age");
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid age");
+            return null;
+        }
+        try {
+            numberOfMember = Integer.parseInt(txtNumberOfMember.getText());
+            if (numberOfMember == 0) {
+                JOptionPane.showMessageDialog(this, "Invalid Number Of Member");
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid Number Of Member");
+            return null;
+        }
+        try {
+            numberOfChildren = Integer.parseInt(txtChildren.getText());
+            if (numberOfChildren == 0) {
+                JOptionPane.showMessageDialog(this, "Invalid Number Of Children");
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid Number Of Children");
+            return null;
+        }
+        try {
+            numberOfAdults = Integer.parseInt(txtAdults.getText());
+            if (numberOfAdults == 0) {
+                JOptionPane.showMessageDialog(this, "Invalid Number Of Adluts");
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid Number Of Adluts");
+            return null;
+        }
         RegistrationDTO registrationDTO = new RegistrationDTO(registrationID, fullName, age, gender, email, phone, address, numberOfMember, numberOfChildren, numberOfAdults);
         return registrationDTO;
     }
+
+    public boolean checkValid(RegistrationDTO dto) {
+        Invalid invalid = new Invalid();
+        boolean registrationIDCheck = invalid.checkRegistrationID(dto.getRegistrationID());
+        boolean fullNameCheck = invalid.checkFullName(dto.getFullName());
+        boolean emailCheck = invalid.checkEmail(dto.getEmail());
+        boolean phoneCheck = invalid.checkPhone(dto.getPhone());
+        boolean numberOfChildrenCheck = invalid.checkNumberOfChildren(dto.getNumberOfChildren());
+        boolean numberOfAdultsCheck = invalid.checkNumberOfAdults(dto.getNumberOfAdults());
+        boolean numberOfMemberCheck = invalid.checkTotalMember(dto.getNumberOfAdults(), dto.getNumberOfChildren(), dto.getNumberOfMember());
+        boolean addressCheck = invalid.checkAddress(dto.getAddress());
+        if (!registrationIDCheck) {
+            JOptionPane.showMessageDialog(this, "Invalid Registration ID");
+            return false;
+        }
+        if (!fullNameCheck) {
+            JOptionPane.showMessageDialog(this, "Invalid FullName");
+            return false;
+        }
+        if (!emailCheck) {
+            JOptionPane.showMessageDialog(this, "Invalid Email");
+            return false;
+        }
+        if (!phoneCheck) {
+            JOptionPane.showMessageDialog(this, "Invalid Phone");
+            return false;
+        }
+        if (!numberOfChildrenCheck) {
+            JOptionPane.showMessageDialog(this, "Invalid Number Of Children");
+            return false;
+        }
+        if (!numberOfAdultsCheck) {
+            JOptionPane.showMessageDialog(this, "Invalid Number Of Adults");
+            return false;
+        }
+        if (!numberOfMemberCheck) {
+            JOptionPane.showMessageDialog(this, "Number of Member isn't equal to Plus of children and adults");
+            return false;
+        }
+        if (!addressCheck) {
+            JOptionPane.showMessageDialog(this, "Invalid Address");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean checkDuplicateID(String registrationID) throws RemoteException {
+        for (RegistrationDTO findAllRegistration : registrationInterface.findAllRegistrations()) {
+            if (findAllRegistration.getRegistrationID().equals(registrationID)) {
+                return true;
+            }
+        }
+        return false;
+    }
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         RegistrationDTO registrationDTO = getInputField();
+        if (registrationDTO == null) {
+            return;
+        }
+        boolean checkValid = checkValid(registrationDTO);
+        if (!checkValid) {
+            return;
+        }
         try {
             if (addNewRegistration) {
-                if (registrationInterface.createRegistration(registrationDTO)) {
-                    if (registrationFullModel != null) {
+                boolean checkDuplicate = checkDuplicateID(registrationDTO.getRegistrationID());
+                if (!checkDuplicate) {
+                    if (registrationInterface.createRegistration(registrationDTO)) {
                         registrationFullModel.getRegistrationServer().getRegistrationList().add(registrationDTO);
+                        tblRegistration.updateUI();
+                        btnAddNew.setEnabled(true);
+                        btnDelete.setEnabled(false);
+                        btnSave.setEnabled(false);
+                        txtRegistrationID.setEditable(true);
+                        addNewRegistration = false;
+                        clearTextField();
+                        JOptionPane.showMessageDialog(this, "Data save");
                     }
-                    tblRegistration.updateUI();
-                    btnAddNew.setEnabled(true);
-                    btnDelete.setEnabled(false);
-                    btnSave.setEnabled(false);
-                    txtRegistrationID.setEditable(true);
-                    addNewRegistration = false;
-                    clearTextField();
-                    JOptionPane.showMessageDialog(this, "Data save");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Duplicate Registration ID");
                 }
             } else {
                 if (registrationInterface.updateRegistration(registrationDTO)) {
@@ -452,10 +557,13 @@ public class RegistrationClient extends javax.swing.JFrame {
                     addNewRegistration = false;
                     clearTextField();
                     JOptionPane.showMessageDialog(this, "Data save");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Update failed");
                 }
             }
         } catch (RemoteException ex) {
             Logger.getLogger(RegistrationClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException ex) {
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -552,10 +660,12 @@ public class RegistrationClient extends javax.swing.JFrame {
                     tblRegistration.updateUI();
                     txtRegistrationID.setEditable(true);
                     btnAddNew.setEnabled(true);
-                    btnDelete.setEnabled(true);
+                    btnDelete.setEnabled(false);
                     btnSave.setEnabled(false);
                     clearTextField();
                     JOptionPane.showMessageDialog(this, "Data save");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Remove Failed");
                 }
             } catch (RemoteException ex) {
                 Logger.getLogger(RegistrationClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -575,8 +685,11 @@ public class RegistrationClient extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchByNameActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        if (jComboBox1.equals("Ascending")) {
-            JOptionPane.showMessageDialog(this, "hello");
+        int choice = jComboBox1.getSelectedIndex();
+        if (choice == 0) {
+
+        } else {
+
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
